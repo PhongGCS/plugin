@@ -4,7 +4,7 @@ class Example extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
-        <div id="inner-html">
+        <div id="cgp-google-map-html">
             CoverGo Platform
         </div>
         <div id="event"></div>
@@ -13,22 +13,22 @@ class Example extends HTMLElement {
   }
 }
 
-if (!window.customElements.get("cgp-example")) {
-  customElements.define("cgp-example", Example)
+if (!window.customElements.get("cgp-google-map")) {
+  customElements.define("cgp-google-map", Example)
 }
 
 const initialise = async (args) => {
-  console.log("`cgp-example` is initialised with", args)
+  console.log("`cgp-google-map` is initialised with", args)
   const { eventManager, root, context } = args
 
-  const content = root.getElementById("inner-html");
+  const content = root.getElementById("cgp-google-map-html");
   content.innerHTML = `
     <div>The plugin has been initialized with</div>
     <div>=========</div>
     <pre>${JSON.stringify(context, null, 2)}</pre>
   `
 
-  unsubscribe = eventManager.subscribe("PARTY:CREATED", ({ type, data }) => {
+  unsubscribe = eventManager.subscribe("cgp:address:create", ({ type, data }) => {
     root.getElementById("event").innerHTML = `
       <div>=========</div>
       
@@ -47,7 +47,7 @@ const initialise = async (args) => {
 }
 
 const destroy = async () => {
-  console.log("`cgp-example` is destroyed!")
+  console.log("`cgp-google-map` is destroyed!")
   unsubscribe?.()
 }
 
