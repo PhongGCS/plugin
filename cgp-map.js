@@ -29,8 +29,7 @@ const render = (data = {}) => {
         loading="lazy"
         allowfullscreen
         referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_KEY}"
-          &q=${encodeURIComponent(address)}">
+        src="https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_KEY}&q=${encodeURIComponent(address)}">
       </iframe>
       `
   }
