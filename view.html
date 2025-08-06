@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Address - Google Map Component</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .info-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .map-container {
+            margin-top: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .event-display {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .event-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .page-title {
+            color: #17a2b8;
+            border-bottom: 2px solid #17a2b8;
+            padding-bottom: 10px;
+        }
+        
+        .demo-button {
+            background: #17a2b8;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        .demo-button:hover {
+            background: #138496;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">View Address</h1>
+        
+        <div class="info-section">
+            <h2>View Address Information</h2>
+            <p>This page subscribes to <code>cgp:address:view</code> events only. Use the demo buttons below to simulate view events.</p>
+            
+            <button class="demo-button" id="demoView1">Demo View 1</button>
+            <button class="demo-button" id="demoView2">Demo View 2</button>
+            <button class="demo-button" id="demoView3">Demo View 3</button>
+            <button class="demo-button" id="clearLog">Clear Log</button>
+        </div>
+        
+        <div class="map-container">
+            <cgp-google-map id="googleMap"></cgp-google-map>
+        </div>
+        
+        <div class="event-display">
+            <h3>Event Log:</h3>
+            <div id="eventLog" class="event-log"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initialise, destroy } from './cgp-map-v2.js';
+        
+        // Simple event manager for testing
+        class EventManager {
+            constructor() {
+                this.subscribers = new Map();
+            }
+            
+            subscribe(eventType, callback) {
+                if (!this.subscribers.has(eventType)) {
+                    this.subscribers.set(eventType, []);
+                }
+                this.subscribers.get(eventType).push(callback);
+                
+                return {
+                    unsubscribe: () => {
+                        const callbacks = this.subscribers.get(eventType);
+                        const index = callbacks.indexOf(callback);
+                        if (index > -1) {
+                            callbacks.splice(index, 1);
+                        }
+                    }
+                };
+            }
+            
+            publish(event) {
+                const callbacks = this.subscribers.get(event.type) || [];
+                callbacks.forEach(callback => callback(event));
+            }
+        }
+        
+        // Initialize component
+        const eventManager = new EventManager();
+        const root = window.document;
+        
+        // Initialize the component
+        initialise({
+            eventManager,
+            root,
+            context: {}
+        });
+        
+        // Trigger initial view event to show default map
+        setTimeout(() => {
+            eventManager.publish({
+                type: 'cgp:address:view',
+                data: {
+                    address: "Default View",
+                    action: 'view',
+                    timestamp: new Date().toISOString()
+                }
+            });
+        }, 100);
+        
+        // Demo data for view events
+        const demoData = {
+            demo1: {
+                address: "123 Main Street, New York, NY",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1839486600007!2d-74.00601508459367!3d40.71277537933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a23e28c1191%3A0x49f75d3281df052a!2s123%20Main%20St%2C%20New%20York%2C%20NY%2010038%2C%20USA!5e0!3m2!1sen!2s!4v1640995200000!5m2!1sen!2s",
+                action: 'view',
+                timestamp: new Date().toISOString()
+            },
+            demo2: {
+                address: "Ho Chi Minh City, Vietnam",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.319452894563!2d106.68748520000001!3d10.7868269!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f2d82dfb88f%3A0xc332735006743f3b!2zMjU4IE5hbSBL4buzIEto4bufaSBOZ2jEqWEsIFBoxrDhu51uZyBWw7UgVGjhu4sgU8OhdSwgUXXhuq1uIDMsIEjhu5MgQ2jDrSBNaW5o!5e0!3m2!1sen!2s!4v1754391188252!5m2!1sen!2s",
+                action: 'view',
+                timestamp: new Date().toISOString()
+            },
+            demo3: {
+                address: "Custom View Content",
+                content: "<div style='padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; border-radius: 8px;'><h3>Custom View Content</h3><p>This is a custom HTML content for view mode</p><p>Address: Demo View 3</p></div>",
+                action: 'view',
+                timestamp: new Date().toISOString()
+            }
+        };
+        
+        // Demo button event listeners
+        document.getElementById('demoView1').addEventListener('click', () => {
+            eventManager.publish({
+                type: 'cgp:address:view',
+                data: demoData.demo1
+            });
+            logEvent('cgp:address:view', demoData.demo1);
+        });
+        
+        document.getElementById('demoView2').addEventListener('click', () => {
+            eventManager.publish({
+                type: 'cgp:address:view',
+                data: demoData.demo2
+            });
+            logEvent('cgp:address:view', demoData.demo2);
+        });
+        
+        document.getElementById('demoView3').addEventListener('click', () => {
+            eventManager.publish({
+                type: 'cgp:address:view',
+                data: demoData.demo3
+            });
+            logEvent('cgp:address:view', demoData.demo3);
+        });
+        
+        // Clear log button
+        document.getElementById('clearLog').addEventListener('click', () => {
+            document.getElementById('eventLog').innerHTML = '';
+        });
+        
+        // Function to log events
+        function logEvent(type, data) {
+            const logElement = document.getElementById('eventLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type}: ${JSON.stringify(data, null, 2)}\n\n`;
+            logElement.innerHTML += logEntry;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            destroy();
+        });
+    </script>
+</body>
+</html>

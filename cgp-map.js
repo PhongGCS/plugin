@@ -17,29 +17,41 @@ if (!window.customElements.get("cgp-google-map")) {
   customElements.define("cgp-google-map", Example)
 }
 
+const render = (data = {}) => {
+  console.log("Render function called with data:", data)
+  const { address } = data
+  const url = DEFAULT_MAP_URL
+  return `
+  <h4>Address</h4>
+  <p>${address}</p>
+  <iframe src="${url}" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
+}
+
+const subscribeToAddressEvents = (eventManager, root) => {
+  const eventTypes = ['cgp:address:create', 'cgp:address:view', 'cgp:address:edit']
+  const unsubscribeFunctions = []
+  
+  eventTypes.forEach(eventType => {
+    const unsubscribe = eventManager.subscribe(eventType, ({ type, data }) => {
+      const content = root.getElementById("cgp-google-map-html")
+      content.innerHTML = render(data)
+    }).unsubscribe
+    
+    unsubscribeFunctions.push(unsubscribe)
+  })
+  
+  return () => {
+    unsubscribeFunctions.forEach(unsubscribe => unsubscribe?.())
+  }
+}
+
 const initialise = async (args) => {
   console.log("`cgp-google-map` is initialised with", args)
   const { eventManager, root, context } = args
 
   const content = root.getElementById("cgp-google-map-html");
-  content.innerHTML = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.319452894563!2d106.68748520000001!3d10.7868269!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f2d82dfb88f%3A0xc332735006743f3b!2zMjU4IE5hbSBL4buzIEto4bufaSBOZ2jEqWEsIFBoxrDhu51uZyBWw7UgVGjhu4sgU8OhdSwgUXXhuq1uIDMsIEjhu5MgQ2jDrSBNaW5o!5e0!3m2!1sen!2s!4v1754391188252!5m2!1sen!2s" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
 
-  unsubscribe = eventManager.subscribe("cgp:address:create", ({ type, data }) => {
-    root.getElementById("event").innerHTML = `
-      <div>=========</div>
-      
-      <pre>Received event: ${type}</pre>
-      <pre>${JSON.stringify(data, null, 2)}</pre>
-      <div>=========</div>
-    `
-  }).unsubscribe;
-
-  root.getElementById("button").addEventListener("click", () => {
-    eventManager.publish({
-      type: 'wc:message',
-      data: "Hello from WebComponent!"
-    })
-  })
+  unsubscribe = subscribeToAddressEvents(eventManager, root)
 }
 
 const destroy = async () => {
