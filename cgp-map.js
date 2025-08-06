@@ -5,10 +5,8 @@ class Example extends HTMLElement {
     super();
     this.innerHTML = `
         <div id="cgp-google-map-html">
-            CoverGo Platform
+            No information to display
         </div>
-        <div id="event"></div>
-        <button id="button">Send event to host</button>
         `
   }
 }
@@ -19,12 +17,22 @@ if (!window.customElements.get("cgp-google-map")) {
 
 const render = (data = {}) => {
   console.log("Render function called with data:", data)
-  const { address } = data
-  const url = DEFAULT_MAP_URL
-  return `
-  <h4>Address</h4>
-  <p>${address}</p>
-  <iframe src="${url}" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
+  const { address, key } = data;
+  if(address) {
+    return `
+      <iframe
+        width="600"
+        height="450"
+        style="border:0"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps/embed/v1/place?key=${key}"
+          &q=${encodeURI(address)}">
+      </iframe>
+      `
+  }
+  
 }
 
 const subscribeToAddressEvents = (eventManager, root) => {
