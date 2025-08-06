@@ -6,7 +6,7 @@ class GoogleMapElement extends HTMLElement {
     super();
     this.innerHTML = `
       <div id="cgp-google-map-html">
-        No information to display
+       No Map To Display
       </div>
     `;
   }
@@ -16,7 +16,7 @@ if (!window.customElements.get("cgp-google-map")) {
   customElements.define("cgp-google-map", GoogleMapElement);
 }
 
-// Render Google Map iframe based on context and address
+
 const renderMap = ({ context, address = "95 Trần Bá Giao" } = {}) => {
   if (!context || !context.properties || !Array.isArray(context.properties)) return '';
 
@@ -27,8 +27,8 @@ const renderMap = ({ context, address = "95 Trần Bá Giao" } = {}) => {
 
   return `
     <iframe
-      width="600"
-      height="450"
+      width="800"
+      height="300"
       style="border:0"
       loading="lazy"
       allowfullscreen
@@ -76,7 +76,6 @@ const initialise = async ({ eventManager, root, context }) => {
 
 // Clean up any subscriptions
 const destroy = async () => {
-  console.log("`cgp-google-map` is destroyed!");
   unsubscribe?.();
 };
 
