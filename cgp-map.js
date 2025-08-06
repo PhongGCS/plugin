@@ -39,7 +39,7 @@ const renderMap = ({ context, address = "95 Trần Bá Giao" } = {}) => {
 };
 
 // Subscribe to address-related events
-const subscribeToAddressEvents = (eventManager, root) => {
+const subscribeToAddressEvents = (eventManager, root, context) => {
   const eventTypes = ['cgp:address:create', 'cgp:address:view', 'cgp:address:edit'];
   const unsubscribeFunctions = [];
 
@@ -47,7 +47,7 @@ const subscribeToAddressEvents = (eventManager, root) => {
     const subscription = eventManager.subscribe(eventType, ({ data }) => {
       const container = root.getElementById("cgp-google-map-html");
       if (container) {
-        container.innerHTML = renderMap(data);
+        container.innerHTML = renderMap({ context, ...data });
       }
     });
 
@@ -71,7 +71,7 @@ const initialise = async ({ eventManager, root, context }) => {
   }
 
   container.innerHTML = renderMap({ context });
-  unsubscribe = subscribeToAddressEvents(eventManager, root);
+  unsubscribe = subscribeToAddressEvents(eventManager, root, context);
 };
 
 // Clean up any subscriptions
