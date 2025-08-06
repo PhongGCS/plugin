@@ -17,7 +17,9 @@ if (!window.customElements.get("cgp-google-map")) {
 
 const render = (data = {}) => {
   console.log("Render function called with data:", data)
-  const { address, key } = data;
+  const { context } = data;
+  const GOOGLE_MAPS_KEY = context.properties.find(e => e.key === 'GOOGLE_MAPS_KEY')?.value;
+  const address = "95 Trần Bá Giao";
   if(address) {
     return `
       <iframe
@@ -27,7 +29,7 @@ const render = (data = {}) => {
         loading="lazy"
         allowfullscreen
         referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.google.com/maps/embed/v1/place?key=${key}"
+        src="https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_KEY}"
           &q=${encodeURI(address)}">
       </iframe>
       `
@@ -60,7 +62,7 @@ const initialise = async (args) => {
   const content = root.getElementById("cgp-google-map-html");
 
   unsubscribe = subscribeToAddressEvents(eventManager, root)
-  render();
+  content.innerHTML = render(eventManager, root, context)
 }
 
 const destroy = async () => {
