@@ -60,6 +60,7 @@ const initialise = async (args) => {
   const content = root.getElementById("cgp-google-map-html");
 
   unsubscribe = subscribeToAddressEvents(eventManager, root)
+  render();
 }
 
 const destroy = async () => {
