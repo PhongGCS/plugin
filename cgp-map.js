@@ -75,11 +75,11 @@ const initialise = async ({ eventManager, root, context }) => {
   unsubscribe = subscribeToAddressEvents(eventManager, root, context);
 };
 
-const getAddress = (addressObject) => {
-  if (!validateAddress(addressObject)) {
+const getAddress = (address) => {
+  if (!validateAddress(address)) {
     return;
   }
-  return `${addressObject.lineOne} ${addressObject.city} ${addressObject.region} ${addressObject.country?.title}`;
+  return `${address.lineOne} ${address.city} ${address.region} ${address.country?.title}`;
 };
 const getLocationMode = (context) => {
   const locationMode = context.data.get(CGP_LOCATION_MODE);
@@ -89,8 +89,8 @@ const getLocationMode = (context) => {
   return locationMode;
 };
 
-const validateAddress = (addressObject) => {
-  if (!addressObject || !addressObject.lineOne || !addressObject.city || addressObject.country?.title) {
+const validateAddress = (address) => {
+  if (!address || !address.lineOne || !address.city || address.country?.title) {
     return false;
   }
   return true;
