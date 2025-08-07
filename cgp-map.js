@@ -76,7 +76,7 @@ const initialise = async ({ eventManager, root, context }) => {
 };
 
 const getAddress = (addressObject) => {
-  if (!addressObject || !addressObject.lineOne || !addressObject.city, addressObject.country?.title) {
+  if (!validateAddress(addressObject)) {
     return;
   }
   return `${addressObject.lineOne} ${addressObject.city} ${addressObject.region} ${addressObject.country?.title}`;
@@ -87,6 +87,13 @@ const getLocationMode = (context) => {
     return;
   }
   return locationMode;
+};
+
+const validateAddress = (addressObject) => {
+  if (!addressObject || !addressObject.lineOne || !addressObject.city, addressObject.country?.title) {
+    return false;
+  }
+  return true;
 };
 
 // Clean up any subscriptions
