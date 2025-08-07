@@ -79,7 +79,7 @@ const getAddress = (addressObject) => {
   if (!addressObject) {
     return;
   }
-  return `${addressObject.lineOne} ${addressObject.city}, ${addressObject.region}, ${addressObject.country}`;
+  return `${addressObject.lineOne} ${addressObject.city} ${addressObject.region} ${addressObject.country?.title}`;
 };
 const getLocationMode = (context) => {
   const locationMode = context.data.get(CGP_LOCATION_MODE);
