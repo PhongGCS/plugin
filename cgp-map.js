@@ -45,10 +45,10 @@ const subscribeToAddressEvents = (eventManager, root, context) => {
   const unsubscribeFunctions = [];
 
   eventTypes.forEach(eventType => {
-    const subscription = eventManager.subscribe(eventType, ({ addressObject }) => {
+    const subscription = eventManager.subscribe(eventType, ({data}) => {
       const container = root.getElementById("cgp-google-map-html");
       if (container) {
-        const address = getAddress(addressObject);
+        const address = getAddress(data);
         container.innerHTML = renderMap({ context, address });
       }
     });
