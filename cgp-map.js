@@ -1,4 +1,7 @@
 let unsubscribe;
+const CGP_ADDRESS = "cgp:address";
+const CGP_LOCATION_MODE = "cgp:location:mode";
+const CGP_ADDRESS_MODIFIED = "cgp:address:modified";
 
 // Define the custom element
 class GoogleMapElement extends HTMLElement {
@@ -6,7 +9,7 @@ class GoogleMapElement extends HTMLElement {
     super();
     this.innerHTML = `
       <div id="cgp-google-map-html">
-       No Map To Display
+       No Information To Display
       </div>
     `;
   }
@@ -17,13 +20,11 @@ if (!window.customElements.get("cgp-google-map")) {
 }
 
 
-const renderMap = ({ context, address = "95 Trần Bá Giao" } = {}) => {
+const renderMap = ({ context, address } = {}) => {
   if (!context || !context.properties || !Array.isArray(context.properties)) return '';
 
   const apiKey = context.properties.find(prop => prop.key === 'GOOGLE_MAPS_KEY')?.value;
   if (!apiKey || !address) return '<p>Missing Google Maps API key or address.</p>';
-
-  const encodedAddress = encodeURIComponent(address);
 
   return `
     <iframe
@@ -33,21 +34,22 @@ const renderMap = ({ context, address = "95 Trần Bá Giao" } = {}) => {
       loading="lazy"
       allowfullscreen
       referrerpolicy="no-referrer-when-downgrade"
-      src="https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodedAddress}">
+      src="https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(address)}">
     </iframe>
   `;
 };
 
 // Subscribe to address-related events
 const subscribeToAddressEvents = (eventManager, root, context) => {
-  const eventTypes = ['cgp:address:create', 'cgp:address:view', 'cgp:address:edit'];
+  const eventTypes = [CGP_ADDRESS_MODIFIED];
   const unsubscribeFunctions = [];
 
   eventTypes.forEach(eventType => {
-    const subscription = eventManager.subscribe(eventType, ({ data }) => {
+    const subscription = eventManager.subscribe(eventType, ({ addressObject }) => {
       const container = root.getElementById("cgp-google-map-html");
       if (container) {
-        container.innerHTML = renderMap({ context, ...data });
+        const address = getAddress(addressObject);
+        container.innerHTML = renderMap({ context, address });
       }
     });
 
@@ -66,12 +68,25 @@ const initialise = async ({ eventManager, root, context }) => {
 
   const container = root.getElementById("cgp-google-map-html");
   if (!container) {
-    console.warn("Container for Google Map not found");
     return;
   }
 
-  container.innerHTML = renderMap({ context });
+  container.innerHTML = renderMap({ context, address: getAddress(context.data[CGP_ADDRESS]) });
   unsubscribe = subscribeToAddressEvents(eventManager, root, context);
+};
+
+const getAddress = (addressObject) => {
+  if (!addressObject) {
+    return;
+  }
+  return `${addressObject.lineOne} ${addressObject.city}, ${addressObject.region}, ${addressObject.country}`;
+};
+const getLocationMode = (context) => {
+  const locationMode = context.data[CGP_LOCATION_MODE];
+  if (!locationMode) {
+    return;
+  }
+  return locationMode;
 };
 
 // Clean up any subscriptions
