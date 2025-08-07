@@ -76,7 +76,7 @@ const initialise = async ({ eventManager, root, context }) => {
 };
 
 const getAddress = (addressObject) => {
-  if (!addressObject || !addressObject.lineOne || !addressObject.city) {
+  if (!addressObject || !addressObject.lineOne || !addressObject.city, addressObject.country?.title) {
     return;
   }
   return `${addressObject.lineOne} ${addressObject.city} ${addressObject.region} ${addressObject.country?.title}`;
