@@ -27,7 +27,7 @@ const renderMap = ({ context, address = "95 Trần Bá Giao" } = {}) => {
 
   return `
     <iframe
-      width="800"
+      width="100%"
       height="300"
       style="border:0"
       loading="lazy"
