@@ -71,7 +71,7 @@ const initialise = async ({ eventManager, root, context }) => {
     return;
   }
 
-  container.innerHTML = renderMap({ context, address: getAddress(context.data[CGP_ADDRESS]) });
+  container.innerHTML = renderMap({ context, address: getAddress(context.data.get(CGP_ADDRESS)) });
   unsubscribe = subscribeToAddressEvents(eventManager, root, context);
 };
 
@@ -82,7 +82,7 @@ const getAddress = (addressObject) => {
   return `${addressObject.lineOne} ${addressObject.city}, ${addressObject.region}, ${addressObject.country}`;
 };
 const getLocationMode = (context) => {
-  const locationMode = context.data[CGP_LOCATION_MODE];
+  const locationMode = context.data.get(CGP_LOCATION_MODE);
   if (!locationMode) {
     return;
   }
