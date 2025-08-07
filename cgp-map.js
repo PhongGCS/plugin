@@ -90,7 +90,7 @@ const getLocationMode = (context) => {
 };
 
 const validateAddress = (address) => {
-  if (!address || !address.lineOne || !address.city || address.country?.title) {
+  if (!address || !address.lineOne || !address.city || !address.country?.title) {
     return false;
   }
   return true;
