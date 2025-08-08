@@ -13,7 +13,7 @@ let unsubscribeFn;
 class GoogleMapElement extends HTMLElement {
   constructor() {
     super();
-    this.innerHTML = `<div id="cgp-google-map-html">No Information To Display</div>`;
+    this.innerHTML = `${noMapToDisplay}`;
   }
 }
 
@@ -24,6 +24,10 @@ if (!customElements.get("cgp-google-map")) {
 // =======================
 // Utility Functions
 // =======================
+
+const noMapToDisplay = `<div id="cgp-google-map-html" style="height: 240px; border-radius: 4px; border-width: 1px; display: flex; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
+No Information To Display
+</div>`;
 const validateAddress = (address) =>
   Boolean(address?.lineOne && address?.city && address?.country?.title);
 
@@ -37,12 +41,12 @@ const getGoogleMapsKey = (context) =>
 
 const renderMap = ({ apiKey, address }) => {
   if (!apiKey || !address) {
-    return `<p>Missing Google Maps API key or address.</p>`;
+    return noMapToDisplay;
   }
   return `
     <iframe
       width="100%"
-      height="300"
+      height="240px"
       style="border:0"
       loading="lazy"
       allowfullscreen
