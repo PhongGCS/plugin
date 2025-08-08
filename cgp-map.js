@@ -4,6 +4,7 @@
 const CGP_ADDRESS = "cgp:address";
 const CGP_LOCATION_MODE = "cgp:location:mode";
 const CGP_ADDRESS_MODIFIED = "cgp:address:modified";
+const noMapToDisplay = `No Information To Display`;
 
 let unsubscribeFn;
 
@@ -27,8 +28,6 @@ if (!customElements.get("cgp-google-map")) {
 // =======================
 // Utility Functions
 // =======================
-
-const noMapToDisplay = `No Information To Display`;
 const validateAddress = (address) =>
   Boolean(address?.lineOne && address?.city && address?.country?.title);
 
