@@ -13,7 +13,10 @@ let unsubscribeFn;
 class GoogleMapElement extends HTMLElement {
   constructor() {
     super();
-    this.innerHTML = `${noMapToDisplay}`;
+    this.innerHTML = `
+    <div id="cgp-google-map-html" style="height: 240px; border-radius: 4px; border-width: 1px; display: flex; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
+      ${noMapToDisplay}
+    </div>`;
   }
 }
 
@@ -25,9 +28,7 @@ if (!customElements.get("cgp-google-map")) {
 // Utility Functions
 // =======================
 
-const noMapToDisplay = `<div id="cgp-google-map-html" style="height: 240px; border-radius: 4px; border-width: 1px; display: flex; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
-No Information To Display
-</div>`;
+const noMapToDisplay = `No Information To Display`;
 const validateAddress = (address) =>
   Boolean(address?.lineOne && address?.city && address?.country?.title);
 
