@@ -4,7 +4,7 @@
 const CGP_ADDRESS = "cgp:address";
 const CGP_LOCATION_MODE = "cgp:location:mode";
 const CGP_ADDRESS_MODIFIED = "cgp:address:modified";
-const noMapToDisplay = `No Information To Display`;
+const noMapToDisplay = `No information to display`;
 
 let unsubscribeFn;
 
