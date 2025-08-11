@@ -100,6 +100,7 @@ const initialise = async ({ eventManager, root, context }) => {
 };
 
 const destroy = async () => {
+  console.log("`cgp-google-map` is destroyed!")
   unsubscribeFn?.();
   unsubscribeFn = null;
 };
