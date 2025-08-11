@@ -70,6 +70,7 @@ const subscribeToAddressEvents = (eventManager, root, context) => {
   const onAddressChange = ({ data }) => {
     console.log("onAddressChange ", data)
     const address = formatAddress(data);
+    context.data = data;
     container.innerHTML = renderMap({
       apiKey: getGoogleMapsKey(context),
       address,
