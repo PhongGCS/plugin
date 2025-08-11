@@ -15,7 +15,7 @@ class GoogleMapElement extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
-    <div id="cgp-google-map-html" style="height: 240px; border-radius: 4px; border-width: 1px; display: flex; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
+    <div id="cgp-google-map-html" style="height: 500px; border-radius: 4px; border-width: 1px; display: flex; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
       ${noMapToDisplay}
     </div>`;
   }
@@ -39,7 +39,7 @@ const formatAddress = (address) => {
 const getGoogleMapsKey = (context) =>
   context?.properties?.find((prop) => prop.key === "GOOGLE_MAPS_KEY")?.value || "";
 
-const renderMap = ({ apiKey, address }) => {
+const renderMap = ({ apiKey, address, context }) => {
   if (!apiKey || !address) {
     return noMapToDisplay;
   }
@@ -53,6 +53,7 @@ const renderMap = ({ apiKey, address }) => {
       referrerpolicy="no-referrer-when-downgrade"
       src="https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(address)}">
     </iframe>
+    <pre>${JSON.stringify(context)} </pre>
   `;
 };
 
@@ -68,7 +69,8 @@ const subscribeToAddressEvents = (eventManager, root, context) => {
     const address = formatAddress(data);
     container.innerHTML = renderMap({
       apiKey: getGoogleMapsKey(context),
-      address
+      address,
+      context: context
     });
   };
 
@@ -93,7 +95,8 @@ const initialise = async ({ eventManager, root, context }) => {
   console.log("Initialization ", context?.data)
   container.innerHTML = renderMap({
     apiKey: getGoogleMapsKey(context),
-    address: formatAddress(context?.data?.get(CGP_ADDRESS))
+    address: formatAddress(context?.data?.get(CGP_ADDRESS)),
+    context: context
   });
 
   unsubscribeFn = subscribeToAddressEvents(eventManager, root, context);
