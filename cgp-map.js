@@ -15,8 +15,10 @@ class GoogleMapElement extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
-    <div id="cgp-google-map-html" style="height: 500px; border-radius: 4px; border-width: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
+    <div id="cgp-google-map-html" style="border-radius: 4px; border-width: 1px; background-color:rgba(0, 0, 0, 0.06);">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; ">
       ${noMapToDisplay}
+      </div>
     </div>`;
   }
 }
@@ -42,7 +44,7 @@ const getGoogleMapsKey = (context) =>
 const renderMap = ({ apiKey, address, context }) => {
   const jsonContext = `<pre style="width: 100%">${JSON.stringify(context, null, 2)} </pre>`
   if (!apiKey || !address) {
-    return `<div> ${noMapToDisplay} </div> ${jsonContext}`;
+    return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div> ${jsonContext}`;
   }
   return `
     <iframe
