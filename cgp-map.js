@@ -29,11 +29,11 @@ if (!customElements.get("cgp-google-map")) {
 // Utility Functions
 // =======================
 const validateAddress = (address) =>
-  Boolean(address?.lineOne && address?.city && address?.country?.title);
+  Boolean(address?.lineOne && address?.city && address?.country);
 
 const formatAddress = (address) => {
   if (!validateAddress(address)) return "";
-  return `${address.lineOne} ${address.city} ${address.region || ""} ${address.country?.title}`.trim();
+  return `${address.lineOne} ${address.city} ${address.region || ""} ${address.country || ""}`.trim();
 };
 
 const getGoogleMapsKey = (context) =>
@@ -64,6 +64,7 @@ const subscribeToAddressEvents = (eventManager, root, context) => {
   if (!container) return () => {};
 
   const onAddressChange = ({ data }) => {
+    console.log("onAddressChange ", data)
     const address = formatAddress(data);
     container.innerHTML = renderMap({
       apiKey: getGoogleMapsKey(context),
@@ -89,6 +90,7 @@ const initialise = async ({ eventManager, root, context }) => {
   const container = root.getElementById("cgp-google-map-html");
   if (!container) return;
 
+  console.log("Initialization ", context?.data)
   container.innerHTML = renderMap({
     apiKey: getGoogleMapsKey(context),
     address: formatAddress(context?.data?.get(CGP_ADDRESS))
