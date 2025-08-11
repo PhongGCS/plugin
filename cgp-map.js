@@ -15,7 +15,7 @@ class GoogleMapElement extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
-    <div id="cgp-google-map-html" style="height: 500px; border-radius: 4px; border-width: 1px; display: flex; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
+    <div id="cgp-google-map-html" style="height: 500px; border-radius: 4px; border-width: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color:rgba(0, 0, 0, 0.06);">
       ${noMapToDisplay}
     </div>`;
   }
@@ -40,8 +40,9 @@ const getGoogleMapsKey = (context) =>
   context?.properties?.find((prop) => prop.key === "GOOGLE_MAPS_KEY")?.value || "";
 
 const renderMap = ({ apiKey, address, context }) => {
+  const jsonContext = `<pre style="width: 100%">${JSON.stringify(context)} </pre>`
   if (!apiKey || !address) {
-    return noMapToDisplay;
+    return `<div> ${noMapToDisplay} </div> ${jsonContext}`;
   }
   return `
     <iframe
@@ -53,7 +54,7 @@ const renderMap = ({ apiKey, address, context }) => {
       referrerpolicy="no-referrer-when-downgrade"
       src="https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(address)}">
     </iframe>
-    <pre>${JSON.stringify(context)} </pre>
+    ${jsonContext}
   `;
 };
 
