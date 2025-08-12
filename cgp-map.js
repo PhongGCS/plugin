@@ -97,7 +97,6 @@ const initialise = async ({ eventManager, root, context }) => {
   if (!container) return;
 
   console.log("Initialization ", context?.data)
-  context.data = [...context.data];
   container.innerHTML = renderMap({
     apiKey: getGoogleMapsKey(context),
     address: formatAddress(context?.data?.get(CGP_ADDRESS)),
