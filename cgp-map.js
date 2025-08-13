@@ -1,14 +1,4 @@
 // =======================
-// Constants
-// =======================
-const CGP_ADDRESS = "cgp:address";
-const CGP_LOCATION_MODE = "cgp:location:mode";
-const CGP_ADDRESS_MODIFIED = "cgp:address:modified";
-const noMapToDisplay = `No information to display`;
-
-let unsubscribeFn;
-
-// =======================
 // Web Component Definition
 // =======================
 class GoogleMapElement extends HTMLElement {
@@ -27,30 +17,41 @@ if (!customElements.get("cgp-google-map")) {
   customElements.define("cgp-google-map", GoogleMapElement);
 }
 
-// =======================
-// Utility Functions
-// =======================
-const validateAddress = (address) =>
-  Boolean(address?.lineOne && address?.city && address?.country);
+const create = async () => {
+  // =======================
+  // Constants
+  // =======================
+  const CGP_ADDRESS = "cgp:address";
+  const CGP_LOCATION_MODE = "cgp:location:mode";
+  const CGP_ADDRESS_MODIFIED = "cgp:address:modified";
+  const noMapToDisplay = `No information to display`;
 
-const formatAddress = (address) => {
-  if (!validateAddress(address)) return "";
-  return `${address.lineOne} ${address.city} ${address.region || ""} ${address.country || ""}`.trim();
-};
+  let unsubscribeFn;
 
-const getGoogleMapsKey = (context) =>
-  context?.properties?.find((prop) => prop.key === "GOOGLE_MAPS_KEY")?.value || "";
+  // =======================
+  // Utility Functions
+  // =======================
+  const validateAddress = (address) =>
+    Boolean(address?.lineOne && address?.city && address?.country);
 
-const renderMap = ({ apiKey, address, context }) => {
-  if (context.data instanceof Map) {
-    const dataObject = Object.fromEntries(context.data);
-    context.data = dataObject;
-  }
+  const formatAddress = (address) => {
+    if (!validateAddress(address)) return "";
+    return `${address.lineOne} ${address.city} ${address.region || ""} ${address.country || ""}`.trim();
+  };
 
-  if (!apiKey || !address) {
-    return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div>`;
-  }
-  return `
+  const getGoogleMapsKey = (context) =>
+    context?.properties?.find((prop) => prop.key === "GOOGLE_MAPS_KEY")?.value || "";
+
+  const renderMap = ({ apiKey, address, context }) => {
+    if (context.data instanceof Map) {
+      const dataObject = Object.fromEntries(context.data);
+      context.data = dataObject;
+    }
+
+    if (!apiKey || !address) {
+      return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div>`;
+    }
+    return `
     <iframe
       width="100%"
       height="240px"
@@ -61,69 +62,74 @@ const renderMap = ({ apiKey, address, context }) => {
       src="https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(address)}">
     </iframe>
   `;
-};
+  };
 
-// =======================
-// Event Subscription
-// =======================
-const subscribeToAddressEvents = (eventManager, root, context) => {
-  const container = root.getElementById("cgp-google-map-html");
-  if (!container) return () => {};
+  // =======================
+  // Event Subscription
+  // =======================
+  const subscribeToAddressEvents = (eventManager, root, context) => {
+    const container = root.getElementById("cgp-google-map-html");
+    if (!container) return () => { };
 
-  const onAddressChange = ({ data }) => {
-    console.log("onAddressChange ", data)
-    const address = formatAddress(data);
-    
-    // Update context.
-    if (context.data instanceof Map) {
-      context.data.set(CGP_ADDRESS) = data
-      const dataObject = Object.fromEntries(context.data);
-      context.data = dataObject;
-    } else {
-      context.data[CGP_ADDRESS] = data;
-    }
+    const onAddressChange = ({ data }) => {
+      console.log("onAddressChange ", data)
+      const address = formatAddress(data);
+
+      // Update context.
+      if (context.data instanceof Map) {
+        context.data.set(CGP_ADDRESS) = data
+        const dataObject = Object.fromEntries(context.data);
+        context.data = dataObject;
+      } else {
+        context.data[CGP_ADDRESS] = data;
+      }
+      container.innerHTML = renderMap({
+        apiKey: getGoogleMapsKey(context),
+        address,
+        context: context
+      });
+    };
+
+    const subscriptions = [
+      eventManager.subscribe(CGP_ADDRESS_MODIFIED, onAddressChange),
+    ];
+
+    return () => {
+      subscriptions.forEach((sub) => sub?.unsubscribe?.());
+    };
+  };
+
+  // =======================
+  // Lifecycle Methods
+  // =======================
+  const initialise = async ({ eventManager, root, context }) => {
+    console.log("`cgp-google-map` initialised with", { eventManager, root, context });
+
+    const container = root.getElementById("cgp-google-map-html");
+    if (!container) return;
+
+    console.log("Initialization ", context?.data)
     container.innerHTML = renderMap({
       apiKey: getGoogleMapsKey(context),
-      address,
+      address: formatAddress(context?.data?.get(CGP_ADDRESS)),
       context: context
     });
+
+    unsubscribeFn = subscribeToAddressEvents(eventManager, root, context);
   };
 
-  const subscriptions = [
-    eventManager.subscribe(CGP_ADDRESS_MODIFIED, onAddressChange),
-  ];
-
-  return () => {
-    subscriptions.forEach((sub) => sub?.unsubscribe?.());
+  const destroy = async () => {
+    console.log("`cgp-google-map` is destroyed!")
+    unsubscribeFn?.();
+    unsubscribeFn = null;
   };
-};
 
-// =======================
-// Lifecycle Methods
-// =======================
-const initialise = async ({ eventManager, root, context }) => {
-  console.log("`cgp-google-map` initialised with", { eventManager, root, context });
+  return {
+    initialise,
+    destroy
+  }
+}
 
-  const container = root.getElementById("cgp-google-map-html");
-  if (!container) return;
-
-  console.log("Initialization ", context?.data)
-  container.innerHTML = renderMap({
-    apiKey: getGoogleMapsKey(context),
-    address: formatAddress(context?.data?.get(CGP_ADDRESS)),
-    context: context
-  });
-
-  unsubscribeFn = subscribeToAddressEvents(eventManager, root, context);
-};
-
-const destroy = async () => {
-  console.log("`cgp-google-map` is destroyed!")
-  unsubscribeFn?.();
-  unsubscribeFn = null;
-};
-
-// =======================
-// Exports
-// =======================
-export { initialise, destroy };
+export {
+  create
+}
