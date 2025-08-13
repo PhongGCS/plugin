@@ -42,8 +42,11 @@ const getGoogleMapsKey = (context) =>
   context?.properties?.find((prop) => prop.key === "GOOGLE_MAPS_KEY")?.value || "";
 
 const renderMap = ({ apiKey, address, context }) => {
-  const dataObject = Object.fromEntries(context.data);
-  context.data = dataObject;
+  if (context.data instanceof Map) {
+    const dataObject = Object.fromEntries(context.data);
+    context.data = dataObject;
+  }
+
   const jsonContext = `<pre style="width: 100%">${JSON.stringify(context, null, 2)} </pre>`
   if (!apiKey || !address) {
     return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div> ${jsonContext}`;
@@ -72,7 +75,15 @@ const subscribeToAddressEvents = (eventManager, root, context) => {
   const onAddressChange = ({ data }) => {
     console.log("onAddressChange ", data)
     const address = formatAddress(data);
-    context.data[CGP_ADDRESS] = data;
+    
+    // Update context.
+    if (context.data instanceof Map) {
+      context.data.set(CGP_ADDRESS) = data
+      const dataObject = Object.fromEntries(context.data);
+      context.data = dataObject;
+    } else {
+      context.data[CGP_ADDRESS] = data;
+    }
     container.innerHTML = renderMap({
       apiKey: getGoogleMapsKey(context),
       address,
