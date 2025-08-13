@@ -43,10 +43,6 @@ const create = async () => {
     context?.properties?.find((prop) => prop.key === "GOOGLE_MAPS_KEY")?.value || "";
 
   const renderMap = ({ apiKey, address, context }) => {
-    if (context.data instanceof Map) {
-      const dataObject = Object.fromEntries(context.data);
-      context.data = dataObject;
-    }
 
     if (!apiKey || !address) {
       return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div>`;
@@ -75,14 +71,6 @@ const create = async () => {
       console.log("onAddressChange ", data)
       const address = formatAddress(data);
 
-      // Update context.
-      if (context.data instanceof Map) {
-        context.data.set(CGP_ADDRESS) = data
-        const dataObject = Object.fromEntries(context.data);
-        context.data = dataObject;
-      } else {
-        context.data[CGP_ADDRESS] = data;
-      }
       container.innerHTML = renderMap({
         apiKey: getGoogleMapsKey(context),
         address,
