@@ -42,6 +42,8 @@ const getGoogleMapsKey = (context) =>
   context?.properties?.find((prop) => prop.key === "GOOGLE_MAPS_KEY")?.value || "";
 
 const renderMap = ({ apiKey, address, context }) => {
+  const dataObject = Object.fromEntries(context.data);
+  context.data = dataObject;
   const jsonContext = `<pre style="width: 100%">${JSON.stringify(context, null, 2)} </pre>`
   if (!apiKey || !address) {
     return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div> ${jsonContext}`;
