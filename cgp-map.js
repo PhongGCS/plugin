@@ -48,7 +48,7 @@ const renderMap = ({ apiKey, address, context }) => {
   }
 
   if (!apiKey || !address) {
-    return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div> ${jsonContext}`;
+    return `<div style="height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; "> ${noMapToDisplay} </div>`;
   }
   return `
     <iframe
