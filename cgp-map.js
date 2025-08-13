@@ -7,7 +7,7 @@ class GoogleMapElement extends HTMLElement {
     this.innerHTML = `
     <div id="cgp-google-map-html" style="border-radius: 4px; border-width: 1px; background-color:rgba(0, 0, 0, 0.06);">
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; ">
-      ${noMapToDisplay}
+      No information to display
       </div>
     </div>`;
   }
