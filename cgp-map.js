@@ -57,8 +57,8 @@ class GoogleMapElement extends HTMLElement {
   // =======================
   // Event Subscription
   // =======================
-  subscribeToAddressEvents = (eventManager, root, context) => {
-    const container = root.getElementById("cgp-google-map-html");
+  subscribeToAddressEvents = (eventManager, context) => {
+    const container = window.document.getElementById("cgp-google-map-html");
     if (!container) return () => { };
 
     const onAddressChange = ({ data }) => {
