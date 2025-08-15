@@ -81,10 +81,10 @@ class GoogleMapElement extends HTMLElement {
     };
   };
 
-  initialise = async ({ eventManager, root, context }) => {
-    console.log("`cgp-google-map` initialised with", { eventManager, root, context });
+  initialise = async ({ eventManager, context }) => {
+    console.log("`cgp-google-map` initialised with", { eventManager, context });
 
-    const container = root.getElementById("cgp-google-map-html");
+    const container = window.document.getElementById("cgp-google-map-html");
     if (!container) return;
 
     console.log("Initialization ", context?.data)
@@ -94,7 +94,7 @@ class GoogleMapElement extends HTMLElement {
       context: context
     });
 
-    this.unsubscribeFn = this.subscribeToAddressEvents(eventManager, root, context);
+    this.unsubscribeFn = this.subscribeToAddressEvents(eventManager, context);
   };
 
   destroy = async () => {
