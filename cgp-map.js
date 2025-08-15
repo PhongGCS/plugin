@@ -1,7 +1,9 @@
+import type {PluginModule} from "@cgp-ui/plugins/src";
+
 // =======================
 // Web Component Definition
 // =======================
-class GoogleMapElement extends HTMLElement {
+class GoogleMapElement extends HTMLElement implements PluginModule {
       // =======================
   // Constants
   // =======================
@@ -14,12 +16,14 @@ class GoogleMapElement extends HTMLElement {
 
   constructor() {
     super();
-    this.innerHTML = `
-    <div id="cgp-google-map-html" style="border-radius: 4px; border-width: 1px; background-color:rgba(0, 0, 0, 0.06);">
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; ">
-      No information to display
+    this.attachShadow({ mode: "open" });
+    this.shadowRoot.innerHTML = `
+      <div id="cgp-google-map-html" style="border-radius: 4px; border-width: 1px; background-color:rgba(0, 0, 0, 0.06);">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; ">
+          No information to display
+        </div>
       </div>
-    </div>`;
+    `;
   }
 
   // =======================
@@ -58,7 +62,7 @@ class GoogleMapElement extends HTMLElement {
   // Event Subscription
   // =======================
   subscribeToAddressEvents = (eventManager, context) => {
-    const container = window.document.getElementById("cgp-google-map-html");
+    const container = this.shadowRoot.getElementById("cgp-google-map-html");
     if (!container) return () => { };
 
     const onAddressChange = ({ data }) => {
@@ -84,7 +88,7 @@ class GoogleMapElement extends HTMLElement {
   initialise = async ({ eventManager, context }) => {
     console.log("`cgp-google-map` initialised with", { eventManager, context });
 
-    const container = window.document.getElementById("cgp-google-map-html");
+    const container = this.shadowRoot.getElementById("cgp-google-map-html");
     if (!container) return;
 
     console.log("Initialization ", context?.data)
