@@ -1,9 +1,7 @@
-import type {PluginModule} from "@cgp-ui/plugins/src";
-
 // =======================
 // Web Component Definition
 // =======================
-class GoogleMapElement extends HTMLElement implements PluginModule {
+class GoogleMapElement extends HTMLElement {
       // =======================
   // Constants
   // =======================
