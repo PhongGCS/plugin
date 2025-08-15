@@ -90,7 +90,7 @@ class GoogleMapElement extends HTMLElement {
     console.log("Initialization ", context?.data)
     container.innerHTML = this.renderMap({
       apiKey: this.getGoogleMapsKey(context),
-      address: this.formatAddress(context?.data?.get(CGP_ADDRESS)),
+      address: this.formatAddress(context?.data?.get(this.CGP_ADDRESS)),
       context: context
     });
 
